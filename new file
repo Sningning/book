@@ -1,0 +1,18 @@
+@Data
+@JsonInclude(JsonInclude.Include.NON_NULL)
+public class Algo {
+    @JsonIgnore
+    private String channelCode;
+    private String algoId;
+    private String algoRule;
+}
+
+List<Algo> algos = channelMapper.selectAlgoList();
+Map<String, List<Algo>> chnAlgoMapping = algos.stream().collect(Collectors.groupingBy(Algo::getChannelCode));
+Map<String, List<String>> chnAlgoIdMapping = algos.stream().collect(Collectors.groupingBy(Algo::getChannelCode,
+        Collectors.mapping(Algo::getAlgoId, Collectors.toList())));
+
+channelAlgos.forEach(e -> {
+    e.setAlgos(chnAlgoMapping.get(e.getChannelCode()));
+    e.setAlgoIds(chnAlgoIdMapping.get(e.getChannelCode()));
+});
